@@ -1,10 +1,9 @@
-<cfset arguments.m.event('tabLabel', 'MuraAuthenticator') />
 <cfset local.userBean = arguments.m.event().get('userbean') />
 <cfoutput>
     <div class="fieldset">
-        <cfif IsDate(local.userBean.get('muraauthdatelastverified'))>
+        <cfif IsDate(local.userBean.get('masaauthdatelastverified'))>
             <div class="form-actions">
-                <button id="muraauth-reset-user" class="btn mura-primary" data-userid="#local.userBean.get('userid')#">
+                <button id="masaauth-reset-user" class="btn mura-primary" data-userid="#local.userBean.get('userid')#">
                     <i class="mi-refresh"></i> Reset Multi-Factor Authentication Settings
                 </button>
             </div>

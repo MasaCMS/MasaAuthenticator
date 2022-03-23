@@ -1,6 +1,6 @@
 /**
- * [MuraAuthenticator](https://github.com/stevewithington/MuraAuthenticator)
- * By: [Steve Withington](https://github.com/stevewithington)
+ * [MasaAuthenticator](https://github.com/MasaCMS/MasaAuthenticator)
+ * By: [We Are Orange BV](https://github.com/weareorange) and [Steve Withington](https://github.com/stevewithington)
  */
 if (!window.console) console = {
     log: function () {}
@@ -28,11 +28,11 @@ var debug = true
 
 jQuery(document).ready(function ($) {
 
-    if (typeof MuraAuthenticator === 'undefined') {
-        var MuraAuthenticator = {
+    if (typeof MasaAuthenticator === 'undefined') {
+        var MasaAuthenticator = {
             init: function () {
-                var txtauthcode = $('input#muraauth-authcode')
-                    , imgqrcode = $('img#muraauth-qrcode');
+                var txtauthcode = $('input#masaauth-authcode')
+                    , imgqrcode = $('img#masaauth-qrcode');
 
                 if (!imgqrcode.length && txtauthcode.length) {
                     txtauthcode.focus();
@@ -90,17 +90,17 @@ jQuery(document).ready(function ($) {
                 });
             }
 
-            , resetMuraAuthUser: function (userid) {
-                return MuraAuthenticator.getUserByUserID(userid)
+            , resetMasaAuthUser: function (userid) {
+                return MasaAuthenticator.getUserByUserID(userid)
                     .then(function (user) {
                         user
-                            .set('muraauthkey', '')
-                            .set('muraauthverificationcode', '')
-                            .set('muraauthscratchcodes', '')
-                            .set('muraauthdeviceverified', '')
-                            .set('muraauthdatelastverified', '');
+                            .set('masaauthkey', '')
+                            .set('masaauthverificationcode', '')
+                            .set('masaauthscratchcodes', '')
+                            .set('masaauthdeviceverified', '')
+                            .set('masaauthdatelastverified', '');
 
-                        return MuraAuthenticator.saveUser(user);
+                        return MasaAuthenticator.saveUser(user);
                     })
                     .then(function (result) {
                         $('#action-modal').remove();
@@ -109,7 +109,7 @@ jQuery(document).ready(function ($) {
                             title: 'MFA Settings Reset'
                             , message: 'All Multi-Factor Authentication settings have been reset. The next time the user attempts to login, they will be required to complete the setup process again.'
                             , okAction: function () {
-                                var btn = $('button#muraauth-reset-user')
+                                var btn = $('button#masaauth-reset-user')
                                     , parentEl = btn.parent()
                                     , msg = '<div class="help-block">This user\'s Multi-Factor Authentication settings have either been reset, or the user has not completed the verification steps yet.</div>';
 
@@ -129,27 +129,27 @@ jQuery(document).ready(function ($) {
             }
         }
     }
-    // @end typeof MuraAuthenticator
+    // @end typeof MasaAuthenticator
 
     // Standard jQuery stuff
-        $('.muraauth-mfa-setup').parents('#mura-login').css('margin-top', '30em');
+        $('.masaauth-mfa-setup').parents('#mura-login').css('margin-top', '30em');
 
-        $('#muraauth-print-backup-codes').on('click', function (e) {
-            return MuraAuthenticator.printElem('#muraauth-backup-codes-wrapper');
+        $('#masaauth-print-backup-codes').on('click', function (e) {
+            return MasaAuthenticator.printElem('#masaauth-backup-codes-wrapper');
         });
 
-        $('#muraauth-reset-user').on('click', function (e) {
+        $('#masaauth-reset-user').on('click', function (e) {
             e.preventDefault();
             var self = this
                 , uid = $(self).data('userid');
 
             confirmDialog({
                 title: 'Are you sure?'
-                , message: 'If you proceed, you will clear all MuraAuthenticator info.'
+                , message: 'If you proceed, you will clear all MasaAuthenticator info.'
                 , yesAction: function () {
                     $('body').append('<div id="action-modal" class="modal-backdrop fade in"></div>');
                     $('#action-modal').spin(spinnerArgs);
-                    MuraAuthenticator.resetMuraAuthUser(uid);
+                    MasaAuthenticator.resetMasaAuthUser(uid);
                 }
             });
 
@@ -157,5 +157,5 @@ jQuery(document).ready(function ($) {
         });
     // @end Standard jQuery Stuff
 
-    MuraAuthenticator.init();
+    MasaAuthenticator.init();
 });

@@ -1,5 +1,7 @@
 component extends="mura.cfobject" output="false" {
 
+    variables.modulename = "Masa Authenticator";
+
     function init() {
         var thispath = RemoveChars(GetDirectoryFromPath(GetCurrentTemplatePath()), 1, Len(application.configBean.get('webroot')));
         var modulepath = Left(thispath, Len(thispath)-Len('/model/handlers/'));
@@ -22,7 +24,6 @@ component extends="mura.cfobject" output="false" {
     function onUserEdit(m) {
         if (arguments.m.globalConfig('mfa') && (arguments.m.currentUser().isSuperUser() || arguments.m.currentUser().isInGroup('Admin'))) {
             var executor = new mura.executor();
-            arguments.m.event('tabLabel', 'MuraAuthenticator');
             return executor.execute(filepath='#get('modulepath')#/inc/on-user-edit.cfm', m=arguments.m);
         }
     }
@@ -31,13 +32,13 @@ component extends="mura.cfobject" output="false" {
         var authcode = Val(arguments.m.event('authcode'));
         var gAuth = new mura.googleAuth();
         var user = arguments.m.getBean('user').loadBy(userid=session.mfa.userid);
-        var isCodeValid = gAuth.authorize(user.get('muraauthkey'), authcode);
+        var isCodeValid = gAuth.authorize(user.get('masaauthkey'), authcode);
 
         if ( !user.get('isnew') ) {
             if ( isCodeValid ) {
                 user
-                    .set('muraauthdeviceverified', true)
-                    .set('muraauthdatelastverified', Now())
+                    .set('masaauthdeviceverified', true)
+                    .set('masaauthdatelastverified', Now())
                     .save();
             } else {
                 // if invalid, check if it's a valid backup code
@@ -49,13 +50,13 @@ component extends="mura.cfobject" output="false" {
     }
 
     function authorizeViaBackupCode(required user, required authcode) {
-        var scratchCodes = user.get('muraauthscratchcodes');
+        var scratchCodes = user.get('masaauthscratchcodes');
         var isCodeValid = ListFind(scratchCodes, arguments.authcode);
 
         if ( isCodeValid ) {
             var scratchCodes = ListDeleteAt(scratchCodes, isCodeValid);
             user
-                .set('muraauthscratchcodes', scratchCodes)
+                .set('masaauthscratchcodes', scratchCodes)
                 .save();
         }
 
@@ -71,11 +72,11 @@ component extends="mura.cfobject" output="false" {
     }
 
     function getHeadQueue(m) {
-        return '<link href="#get('modulepath')#/assets/muraauthenticator.css" rel="stylesheet" type="text/css" />';
+        return '<link href="#get('modulepath')#/assets/masaauthenticator.css" rel="stylesheet" type="text/css" />';
     }
 
     function getFootQueue(m) {
-        return '<script src="#get('modulepath')#/assets/muraauthenticator.js" type="text/javascript"></script>';
+        return '<script src="#get('modulepath')#/assets/masaauthenticator.js" type="text/javascript"></script>';
     }
 
     // function renderHTMLQueues(m) {

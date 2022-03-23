@@ -4,12 +4,12 @@
     <script>
         jQuery(document).ready(function($) {
             Mura.loader()
-                .loadcss('#arguments.m.globalConfig('context')#/modules/MuraAuthenticator/assets/muraauthenticator.css')
-                .loadjs('#arguments.m.globalConfig('context')#/modules/MuraAuthenticator/assets/muraauthenticator.js');
+                .loadcss('#arguments.m.globalConfig('context')#/modules/MasaAuthenticator/assets/masaauthenticator.css')
+                .loadjs('#arguments.m.globalConfig('context')#/modules/MasaAuthenticator/assets/masaauthenticator.js');
         });
     </script>
 
-    <div class="muraauth-challenge-wrapper">
+    <div class="masaauth-challenge-wrapper">
 
         <cfif local.isBlocked>
             <div class="alert alert-error">
@@ -19,7 +19,7 @@
 
             <!--- Only show if the user hasn't set up MFA yet --->
             <!--- REMOVE ability to generate newGAuth for production (used for testing only) --->
-            <cfif m.event('newMuraAuth') eq true or not Len(local.user.get('muraauthdeviceverified')) or local.user.get('muraauthdeviceverified') eq false>
+            <cfif m.event('newMasaAuth') eq true or not Len(local.user.get('masaauthdeviceverified')) or local.user.get('masaauthdeviceverified') eq false>
                 <cftry>
                     <cfinclude template="mfa-setup.cfm" />
                     <cfcatch>
