@@ -4,7 +4,7 @@ component extends="mura.cfobject" output="false" {
 
     function init() {
         var thispath = RemoveChars(GetDirectoryFromPath(GetCurrentTemplatePath()), 1, Len(application.configBean.get('webroot')));
-        var modulepath = Left(thispath, Len(thispath)-Len('/model/handlers/'));
+        var modulepath = application.configBean.get('context') & Left(thispath, Len(thispath)-Len('/model/handlers/'));
         set('modulepath', modulepath);
         return this;
     }
