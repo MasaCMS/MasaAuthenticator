@@ -12,8 +12,8 @@
         local.user
             .set('masaauthkey', local.sharedSecret)
             .set('masaauthverificationcode', local.verificationCode)
-            .set('masaauthscratchcodes', ArrayToList(local.scratchCodes))
-            .save();
+            .set('masaauthscratchcodes', ArrayToList(local.scratchCodes));
+        arguments.handler.saveMFAAttributes(local.user);
     } catch(any e) {
         // for testing only - should handle differently in production
         WriteDump(e);
