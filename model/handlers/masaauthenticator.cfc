@@ -12,13 +12,13 @@ component extends="mura.cfobject" output="false" {
     function onAdminMFAChallengeRender(m) {
         var executor = new mura.executor();
         arguments.m.event('isadminlogin', true);
-        return executor.execute(filepath='#get('modulepath')#/inc/challenge.cfm', m=arguments.m);
+        return executor.execute(filepath='#get('modulepath')#/inc/challenge.cfm', m=arguments.m, handler=this);
     }
 
     function onSiteMFAChallengeRender(m) {
         var executor = new mura.executor();
         arguments.m.event('isadminlogin', false);
-        return executor.execute(filepath='#get('modulepath')#/inc/challenge.cfm', m=arguments.m);
+        return executor.execute(filepath='#get('modulepath')#/inc/challenge.cfm', m=arguments.m, handler=this);
     }
 
     function onUserEdit(m) {
@@ -38,8 +38,8 @@ component extends="mura.cfobject" output="false" {
             if ( isCodeValid ) {
                 user
                     .set('masaauthdeviceverified', true)
-                    .set('masaauthdatelastverified', Now())
-                    .save();
+                    .set('masaauthdatelastverified', Now());
+                this.saveMFAAttributes(user);
             } else {
                 // if invalid, check if it's a valid backup code
                 isCodeValid = this.authorizeViaBackupCode(user, authcode);
@@ -55,12 +55,23 @@ component extends="mura.cfobject" output="false" {
 
         if ( isCodeValid ) {
             var scratchCodes = ListDeleteAt(scratchCodes, isCodeValid);
-            user
-                .set('masaauthscratchcodes', scratchCodes)
-                .save();
+            user.set('masaauthscratchcodes', scratchCodes);
+            this.saveMFAAttributes(user);
         }
 
         return isCodeValid;
+    }
+
+    // Writes only the user's extended attributes (the MFA fields), not the user record itself.
+    function saveMFAAttributes(required user) {
+        var data = arguments.user.getAllValues();
+
+        if ( Len(data.extendSetID) ) {
+            getBean('configBean').getClassExtensionManager().saveExtendedData(data.userid, data, 'tclassextenddatauseractivity');
+            getBean('userManager').purgeUserCache(userBean=arguments.user);
+        }
+
+        return arguments.user;
     }
 
     function onAdminHTMLHeadRender(m) {
